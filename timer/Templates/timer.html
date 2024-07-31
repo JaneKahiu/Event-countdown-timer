@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        #timer {
+            background-color: #ececec;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e44d26;
+        }
+        
+        #event {
+            font-size: 34px;
+            font-weight: bold;
+            color: #221d1c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upcoming Events</h1>
+    <ul>
+        {% for event in events %}
+            <li id="timer">
+                <div id="event">{{ event.name }}</div>
+                <div id="countdown" 
+                     data-hours="{{ event.hours }}" 
+                     data-minutes="{{ event.minutes }}" 
+                     data-seconds="{{ event.seconds }}">
+                    {{ event.hours }} hours, {{ event.minutes }} minutes, {{ event.seconds }} seconds remaining
+                </div>
+            </li>
+        {% empty %}
+            <li>No upcoming events.</li>
+        {% endfor %}
+    </ul>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to update the countdown timer
+            function updateTimer() {
+                var timers = document.querySelectorAll('#countdown');
+                
+                timers.forEach(function(timer) {
+                    var hours = parseInt(timer.getAttribute('data-hours'));
+                    var minutes = parseInt(timer.getAttribute('data-minutes'));
+                    var seconds = parseInt(timer.getAttribute('data-seconds'));
+
+                    if (seconds > 0) {
+                        seconds--;
+                    } else {
+                        if (minutes > 0) {
+                            minutes--;
+                            seconds = 59;
+                        } else {
+                            if (hours > 0) {
+                                hours--;
+                                minutes = 59;
+                                seconds = 59;
+                            } else {
+                                // Timer has reached zero
+                                hours = 0;
+                                minutes = 0;
+                                seconds = 0;
+                            }
+                        }
+                    }
+
+                    // Update the timer display
+                    timer.textContent =
+                        (hours < 10 ? '0' : '') + hours + ' : ' +
+                        (minutes < 10 ? '0' : '') + minutes + ' : ' +
+                        (seconds < 10 ? '0' : '') + seconds;
+
+                    // Update the data attributes
+                    timer.setAttribute('data-hours', hours);
+                    timer.setAttribute('data-minutes', minutes);
+                    timer.setAttribute('data-seconds', seconds);
+                });
+            }
+
+            // Update the timer every second
+            setInterval(updateTimer, 1000);
+        });
+    </script>
+</body>
+</html>
